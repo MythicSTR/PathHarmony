@@ -82,6 +82,23 @@ class Task:
         self.data_size = data_size
         self.start_time = None
         self.end_time = None
+        self.location, self.latitude, self.longitude = self.select_random_location()
+
+    def select_random_location(self):
+        # Dictionary of real-world locations with latitude and longitude coordinates
+        locations = {
+            "New York, USA": (40.7128, -74.0060),
+            "London, UK": (51.5074, -0.1278),
+            "Tokyo, Japan": (35.6895, 139.6917),
+            "Paris, France": (48.8566, 2.3522),
+            "Sydney, Australia": (-33.8688, 151.2093),
+            "Rio de Janeiro, Brazil": (-22.9068, -43.1729),
+            "Moscow, Russia": (55.7558, 37.6173),
+            # Add more locations as needed...
+        }
+        location = random.choice(list(locations.keys()))
+        latitude, longitude = locations[location]
+        return location, latitude, longitude
 
     def execute(self):
         self.start_time = time.time()
@@ -89,7 +106,7 @@ class Task:
         self.end_time = time.time()
         start_time_str = time.strftime("%H:%M:%S", time.localtime(self.start_time))
         end_time_str = time.strftime("%H:%M:%S", time.localtime(self.end_time))
-        print(f"Task {self.task_id} (Data Size: {self.data_size} MB) started at {start_time_str} and ended at {end_time_str}.")
+        print(f"Task {self.task_id} (Data Size: {self.data_size} MB) started at {start_time_str} and ended at {end_time_str}. Location: {self.location} (Latitude: {self.latitude}, Longitude: {self.longitude})")
 
 class TaskGenerator:
     def __init__(self, max_duration, max_data_size, num_tasks):
@@ -123,15 +140,15 @@ class TaskGenerator:
         for thread in threads:
             thread.join()
 
-# Example usage
-max_duration = 5  # Maximum duration of a task in seconds
-max_data_size = 500  # Maximum data size of a task in MB
-num_tasks = 3  # Number of tasks to generate
+# # Example usage
+# max_duration = 5  # Maximum duration of a task in seconds
+# max_data_size = 500  # Maximum data size of a task in MB
+# num_tasks = 3  # Number of tasks to generate
 
-task_generator = TaskGenerator(max_duration, max_data_size, num_tasks)
-task_generator.generate_tasks()
+# task_generator = TaskGenerator(max_duration, max_data_size, num_tasks)
+# task_generator.generate_tasks()
 
-task_generator.execute_tasks()
+# task_generator.execute_tasks()
 
 """
 Sample Output

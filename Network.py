@@ -117,10 +117,12 @@ class Node:
         self.computational_power = computational_power
         self.memory = memory
         self.routing_table = {}  # Initialize an empty routing table
-    
+        self.is_busy = False  # New attribute to track if the node is busy with a task
+
     def __repr__(self):
         return (f"Node(id={self.id}, ip='{self.ip}', hostname='{self.hostname}', status='{self.status}', "
-                f"latitude={self.latitude}, longitude={self.longitude}, computational_power={self.computational_power}, memory={self.memory})")
+                f"latitude={self.latitude}, longitude={self.longitude}, computational_power={self.computational_power}, memory={self.memory}, "
+                f"is_busy={self.is_busy})")
 
 class Network:
     def __init__(self):
@@ -172,39 +174,39 @@ class Network:
             for target, path in self.graph.nodes[node]['routing_table'].items():
                 print(f"  To Node {target}: Path = {path}")
 
-# Create the network
-network = Network()
+# # Create the network
+# network = Network()
 
-# Add nodes with geographical coordinates (latitude, longitude), computational power, and memory
-node1 = Node(1, "192.168.1.1", "node1", "active", 37.7749, -122.4194, 10, 32)  # San Francisco, CA
-node2 = Node(2, "192.168.1.2", "node2", "inactive", 34.0522, -118.2437, 8, 16)  # Los Angeles, CA
-node3 = Node(3, "192.168.1.3", "node3", "active", 40.7128, -74.0060, 15, 64)  # New York, NY
-node4 = Node(4, "192.168.1.4", "node4", "active", 41.8781, -87.6298, 20, 128)  # Chicago, IL
+# # Add nodes with geographical coordinates (latitude, longitude), computational power, and memory
+# node1 = Node(1, "192.168.1.1", "node1", "active", 37.7749, -122.4194, 10, 32)  # San Francisco, CA
+# node2 = Node(2, "192.168.1.2", "node2", "inactive", 34.0522, -118.2437, 8, 16)  # Los Angeles, CA
+# node3 = Node(3, "192.168.1.3", "node3", "active", 40.7128, -74.0060, 15, 64)  # New York, NY
+# node4 = Node(4, "192.168.1.4", "node4", "active", 41.8781, -87.6298, 20, 128)  # Chicago, IL
 
-network.add_node(node1)
-network.add_node(node2)
-network.add_node(node3)
-network.add_node(node4)
+# network.add_node(node1)
+# network.add_node(node2)
+# network.add_node(node3)
+# network.add_node(node4)
 
-# Add connections, weights will be calculated based on geographical distance
-network.add_connection(1, 2)
-network.add_connection(1, 3)
-network.add_connection(2, 4)
-network.add_connection(3, 4)
+# # Add connections, weights will be calculated based on geographical distance
+# network.add_connection(1, 2)
+# network.add_connection(1, 3)
+# network.add_connection(2, 4)
+# network.add_connection(3, 4)
 
-# Visualize the network
-network.visualize()
+# # Visualize the network
+# network.visualize()
 
-# Update routing tables
-network.update_routing_tables()
+# # Update routing tables
+# network.update_routing_tables()
 
-# Print routing tables
-network.print_routing_tables()
+# # Print routing tables
+# network.print_routing_tables()
 
-# Calculate and print geographical distances between nodes
-print("Geographical Distances:")
-for id1 in network.graph.nodes:
-    for id2 in network.graph.nodes:
-        if id1 != id2:
-            distance = network.calculate_geographical_distance(id1, id2)
-            print(f"Distance between Node {id1} and Node {id2}: {distance:.2f}")
+# # Calculate and print geographical distances between nodes
+# print("Geographical Distances:")
+# for id1 in network.graph.nodes:
+#     for id2 in network.graph.nodes:
+#         if id1 != id2:
+#             distance = network.calculate_geographical_distance(id1, id2)
+#             print(f"Distance between Node {id1} and Node {id2}: {distance:.2f}")
