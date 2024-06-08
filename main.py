@@ -1,38 +1,21 @@
-from Tasks import TaskGenerator, Task
-from LoadBalancer import LoadBalancer
-from Node import Node
-from queue import Queue
+import random
 import time
-from threading import Event, Thread
-from Network import Network
+from LoadBalancer import Node, Task, LoadBalancer
 
 def main():
-    buffer_size = 10
-    buffer = Queue(buffer_size)
-    stop_event = Event()
+    nodes = [
+        Node(1, 4, 400, -74.0060, 40.7128),
+        Node(2, 8, 500, -118.2437, 34.0522),
+        Node(3, 6, 600, -87.6298, 41.8781),
+        Node(4, 10, 100, -95.3698, 29.7604)
+    ]
 
-    # Node locations (latitude and longitude)
-    node_locations = {
-        1: (40.7128, -74.0060),  # New York
-        2: (34.0522, -118.2437), # Los Angeles
-        3: (41.8781, -87.6298),  # Chicago
-        4: (29.7604, -95.3698)   # Houston
-    }
+    lb = LoadBalancer(nodes)
+    lb.start()
 
-    # Node computational power and memory size
-    node_specs = {
-        1: (4, 400),   # Computational Power: 4, Memory Size: 400 MB
-        2: (8, 500),  # Computational Power: 8, Memory Size: 500 MB
-        3: (6, 600),  # Computational Power: 6, Memory Size: 600 MB
-        4: (10, 100)  # Computational Power: 10, Memory Size: 100 MB
-    }
-
-    nodes = [Node(node_id, *node_locations[node_id], *node_specs[node_id], stop_event) for node_id in node_locations]
-
-    # Print node properties
     for node in nodes:
         print(f"Node {node.node_id} properties:")
-        print(f"  Available: {node.is_available()}")
+        print(f"  Available: {node.available}")
         print(f"  Tasks: {node.tasks}")
         print(f"  Computational Power: {node.computational_power}")
         print(f"  Memory Size: {node.memory_size}")
@@ -40,27 +23,25 @@ def main():
         print(f"  Latitude: {node.latitude}")
         print()
 
-    load_balancer = LoadBalancer(buffer, nodes, stop_event)
-    load_balancer.calculate_routing_tables()
-    load_balancer.print_routing_tables()
-    
-    task_generator = TaskGenerator(buffer_size, buffer, stop_event, node_locations)
+    for node in nodes:
+        print(f"Routing table for Node {node.node_id}:")
+        distances = lb.routing_table[node.node_id]['distances']
+        predecessors = lb.routing_table[node.node_id]['predecessors']
+        for dest, dist in distances.items():
+            pred = predecessors[dest]
+            print(f"  To Node {dest}: Distance = {dist:.2f}, Predecessor = {pred}")
+        print()
 
-    try:
-        for node in nodes:
-            Thread(target=node.run).start()  # Start a separate thread for each node
-        load_balancer.start()
-        task_generator.start()
-
-        while not stop_event.is_set():
-            time.sleep(1)
-    except KeyboardInterrupt:
-        print("Stopping...")
-        stop_event.set()
-        for node in nodes:
-            node.join()  # Wait for node threads to finish
-        load_balancer.join()
-        task_generator.join()
+    task_id = 0
+    while True:
+        task_duration = random.randint(1, 5)
+        task_data_size = random.randint(50, 700)
+        task_location = (random.uniform(29.0, 42.0), random.uniform(-118.0, -74.0))
+        task = Task(task_id, task_duration, task_data_size, task_location)
+        print(f"Generated Task {task_id} with duration {task_duration} s, data size {task_data_size} MB, and location {task_location}")
+        lb.add_task(task)
+        task_id += 1
+        time.sleep(1.5)  # Slow down task generation for clarity
 
 if __name__ == "__main__":
     main()
